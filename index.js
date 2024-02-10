@@ -3,7 +3,15 @@ import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config';
 
-const httpServer = createServer();
+const httpServer = createServer((req, res) => {
+  if (req.url === '/test'){
+    res.write('OK');
+    res.end()
+    return
+  }
+  res.writeHead(301, { 'Location': process.env.REDIRECT_URL });
+  res.end();
+});
 const io = new Server(httpServer, {
   cors: { origin: process.env.ORIGIN, credentials: true },
   path: process.env.SOCKET_PATH
