@@ -1,10 +1,10 @@
 {
   "name": "hangmanapi",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "WebSocket API for React Hangman",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "p-krystian",
   "license": "ISC",
