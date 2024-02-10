@@ -41,7 +41,7 @@
       const section = document.querySelector('section');
       const create = document.querySelector('#create');
       const end = document.querySelector('#end');
-      const socket = io('ws://127.0.0.1', { path: '/multi' });
+      const socket = io('ws://127.0.0.1:8090', { path: '/multi/' });
 
       function join(id){
         socket.emit('join-game', id)

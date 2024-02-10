@@ -1,10 +1,12 @@
+import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import 'dotenv/config'
+import 'dotenv/config';
 
-const io = new Server(process.env.PORT, {
+const httpServer = createServer();
+const io = new Server(httpServer, {
   cors: { origin: process.env.ORIGIN, credentials: true },
-  path: process.env.PATH
+  path: process.env.SOCKET_PATH
 });
 
 const freeGames = {};
@@ -152,4 +154,8 @@ io.on('connection', socket => {
   socket.on('continue-game', () => continueGame(socket));
 });
 
-console.log(`Server started at: ${new Date().toLocaleString()}`);
+httpServer.listen(process.env.PORT, process.env.HOSTNAME, () => {
+  console.log(`Server started: ${new Date().toLocaleString()}`);
+  console.log(`Hostname: ${process.env.HOSTNAME}`);
+  console.log(`Port: ${process.env.PORT}`);
+});
