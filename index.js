@@ -1,8 +1,9 @@
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
+import 'dotenv/config'
 
-const io = new Server(8090, {
-  cors: { origin: '*', credentials: true }
+const io = new Server(process.env.PORT, {
+  cors: { origin: process.env.ORIGIN, credentials: true }
 });
 
 const freeGames = {};
