@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import 'dotenv/config'
 
 const io = new Server(process.env.PORT, {
-  cors: { origin: process.env.ORIGIN, credentials: true }
+  cors: { origin: process.env.ORIGIN, credentials: true },
+  path: process.env.PATH
 });
 
 const freeGames = {};
@@ -150,3 +151,5 @@ io.on('connection', socket => {
   socket.on('end-game', phrase => endGame(socket, phrase));
   socket.on('continue-game', () => continueGame(socket));
 });
+
+console.log(`Server started at: ${new Date().toLocaleString()}`);
