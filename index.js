@@ -20,7 +20,14 @@ const io = new Server(httpServer, {
 const freeGames = {};
 const startedGames = {};
 
-const safeStr = (str, len) => str.trim().toUpperCase().substring(0, len);
+const safeStr = (str, len) => (
+  str.trim()
+    .toUpperCase()
+    .substring(0, len)
+    .split('')
+    .filter(char => /^[A-ZŻŹĆĄŚĘŁÓŃ ]$/.test(char))
+    .join('')
+);
 const inGame = socket => Boolean(startedGames[socket?.gameID]);
 const opponentID = (gameID, playerID) => (
   Object.keys(startedGames[gameID]).filter(id => id != playerID)[0]

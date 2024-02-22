@@ -41,7 +41,7 @@
       const section = document.querySelector('section');
       const create = document.querySelector('#create');
       const end = document.querySelector('#end');
-      const socket = io('ws://127.0.0.1:8090', { path: '/multi/' });
+      const socket = io('ws://192.168.1.101:8090', { path: '/multi/' });
 
       function join(id){
         socket.emit('join-game', id)
@@ -58,11 +58,11 @@
           return
         }
         let gameList = '';
-        for (const game in games){
+        for (const game of games){
           gameList += `
             <div>
-              ${games[game]}
-              <button onclick="join('${game}')">Dołącz</button>
+              ${game.name}
+              <button onclick="join('${game.id}')">Dołącz</button>
             </div>
           `;
         }
