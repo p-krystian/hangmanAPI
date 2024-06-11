@@ -1,13 +1,19 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
+import semver from 'semver';
 import 'dotenv/config';
 
+const minFontVersion = '0.8.0';
+const alphabets = {
+  pl: "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŻŹ ",
+  en: "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
+};
 const httpServer = createServer((req, res) => {
   if (req.url === '/test'){
     res.write('OK');
-    res.end()
-    return
+    res.end();
+    return;
   }
   res.writeHead(301, { 'Location': process.env.REDIRECT_URL });
   res.end();
@@ -17,10 +23,6 @@ const io = new Server(httpServer, {
   path: process.env.SOCKET_PATH
 });
 
-const alphabets = {
-  pl: "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŻŹ ",
-  en: "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
-};
 const freeGames = Object.keys(alphabets).reduce(
   (o, k) => ({...o, [k]: {}}),
   {}
@@ -166,11 +168,13 @@ function onDisconnect(socket){
     delete startedGames[id];
   }
 }
-function joinLobby(socket, langData){
-  onDisconnect(socket)
+function joinLobby(socket, langData, frontVersion){
+  onDisconnect(socket);
   socket.gameID = null;
-  const [code, letters] = langData || [null, null]
+  const [code, letters] = langData || [null, null];
 
+  if (semver.gt(minFontVersion, frontVersion || '0.0.0'))
+    return socket.emit('old-version');
   if (!letters?.split('').every(
     c => alphabets[code]?.includes(c.toUpperCase())
   )) return socket.emit('unsupported-lang');
@@ -183,7 +187,7 @@ function joinLobby(socket, langData){
 io.on('connection', socket => {
   socket.on('disconnecting', () => onDisconnect(socket));
 
-  socket.on('join-lobby', langData => joinLobby(socket, langData));
+  socket.on('join-lobby', (langData, ver) => joinLobby(socket, langData, ver));
   socket.on('create-game', name => createGame(socket, name));
   socket.on('join-game', id => joinGame(socket, id));
   socket.on('write-phrase', phrase => writePharse(socket, phrase));

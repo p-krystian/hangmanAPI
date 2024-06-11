@@ -1,6 +1,6 @@
 {
   "name": "hangmanapi",
-  "version": "0.6.5",
+  "version": "0.7.5",
   "description": "WebSocket API for React Hangman",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,7 @@
   "type": "module",
   "dependencies": {
     "dotenv": "^16.4.1",
+    "semver": "^7.6.2",
     "socket.io": "^4.7.4",
     "uuid": "^9.0.1"
   },
