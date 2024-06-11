@@ -17,38 +17,48 @@ const io = new Server(httpServer, {
   path: process.env.SOCKET_PATH
 });
 
-const freeGames = {};
+const alphabets = {
+  pl: "AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŻŹ ",
+  en: "ABCDEFGHIJKLMNOPQRSTUVWXYZ "
+};
+const freeGames = Object.keys(alphabets).reduce(
+  (o, k) => ({...o, [k]: {}}),
+  {}
+);
 const startedGames = {};
 
-const safeStr = (str, len) => (
+const safeStr = (str, len, lang) => (
   str.trim()
     .toUpperCase()
     .substring(0, len)
     .split('')
-    .filter(char => /^[A-ZŻŹĆĄŚĘŁÓŃ ]$/.test(char))
+    .filter(char => alphabets[lang].includes(char))
     .join('')
 );
 const inGame = socket => Boolean(startedGames[socket?.gameID]);
 const opponentID = (gameID, playerID) => (
-  Object.keys(startedGames[gameID]).filter(id => id != playerID)[0]
+  // Object.keys(startedGames[gameID]).filter(id => id != playerID)[0]
+  Object.keys(startedGames[gameID])
+    .filter(id => !['language', playerID].includes(id))[0]
 );
 const opponentData = (gameID, playerID) => (
   startedGames[gameID][opponentID(gameID, playerID)]
 );
-const lobbyList = () => (
-  Object.keys(freeGames).map(id => ({id: id, name: freeGames[id]}))
+const lobbyList = lang => (
+  Object.keys(freeGames[lang]).map(id => ({id: id, name: freeGames[lang][id]}))
 );
 
 function sendGames(socket){
-  socket.to('lobby').emit('game-list', lobbyList());
+  socket.to(`lobby-${socket.lang}`).emit('game-list', lobbyList(socket.lang));
 }
 function createGame(socket, name){
-  if (socket.gameID || name.trim().length < 3 || freeGames.length >= 8)
+  const lang = socket.lang;
+  if (socket.gameID || name.trim().length < 3 || freeGames[lang].length >= 8)
     return;
 
   const id = uuidv4();
-  freeGames[id] = safeStr(name, 12);
-  socket.leave('lobby');
+  freeGames[lang][id] = safeStr(name, 12, lang);
+  socket.leave(`lobby-${lang}`);
   socket.join(id);
   socket.gameID = id;
   socket.emit('wait-start');
@@ -63,13 +73,14 @@ async function joinGame(socket, id){
     sendGames(socket);
     return;
   }
-  delete freeGames[id];
+  delete freeGames[socket.lang][id];
   startedGames[id] = {
+    language: socket.lang,
     [playersIn[0].id]: {wins: 0, rounds: 0, phrase: null},
     [socket.id]: {wins: 0, rounds: 0, phrase: null},
   };
   socket.gameID = id;
-  socket.leave('lobby');
+  socket.leave(`lobby-${socket.lang}`);
   socket.to(id).emit('give-phrase');
   socket.join(id);
   socket.emit('give-phrase');
@@ -80,9 +91,13 @@ function writePharse(socket, phrase){
     return;
 
   const data = startedGames[socket.gameID];
-  data[socket.id].phrase = safeStr(phrase, 20);
+  data[socket.id].phrase = safeStr(phrase, 20, data.language);
 
-  if (Object.values(data).every(p => p.phrase)){
+  if (
+    Object.values(data)
+      .filter(v => typeof(v) === 'object')
+      .every(p => p.phrase)
+  ){
     const opponentPhrase = opponentData(socket.gameID, socket.id).phrase;
     socket.emit('start-game', opponentPhrase);
     socket.to(
@@ -103,7 +118,7 @@ function endGame(socket, phrase){
     data[socket.id].wins++;
   oData.phrase = null;
 
-  if (Object.values(data).slice(0, 2).every(p => !p.phrase)){
+  if (Object.values(data).slice(1, 3).every(p => !p.phrase)){
     data[socket.id].rounds++;
     socket.emit('game-data', {
       wins: data[socket.id].wins,
@@ -142,8 +157,8 @@ function onDisconnect(socket){
 
   if (!id) return;
 
-  if (Object.keys(freeGames).includes(id)){
-    delete freeGames[id];
+  if (Object.keys(freeGames[socket.lang]).includes(id)){
+    delete freeGames[socket.lang][id];
     sendGames(socket);
   }
   else if (Object.keys(startedGames).includes(id)){
@@ -151,17 +166,24 @@ function onDisconnect(socket){
     delete startedGames[id];
   }
 }
-function joinLobby(socket){
+function joinLobby(socket, langData){
   onDisconnect(socket)
   socket.gameID = null;
-  socket.join('lobby');
-  socket.emit('game-list', lobbyList());
+  const [code, letters] = langData || [null, null]
+
+  if (!letters?.split('').every(
+    c => alphabets[code]?.includes(c.toUpperCase())
+  )) return socket.emit('unsupported-lang');
+
+  socket.lang = code;
+  socket.join(`lobby-${code}`);
+  socket.emit('game-list', lobbyList(code));
 }
 
 io.on('connection', socket => {
   socket.on('disconnecting', () => onDisconnect(socket));
 
-  socket.on('join-lobby', () => joinLobby(socket));
+  socket.on('join-lobby', langData => joinLobby(socket, langData));
   socket.on('create-game', name => createGame(socket, name));
   socket.on('join-game', id => joinGame(socket, id));
   socket.on('write-phrase', phrase => writePharse(socket, phrase));
