@@ -49,7 +49,7 @@
 
       socket.on('connect', () => {
         p.innerText = socket.id;
-        socket.emit('join-lobby')
+        socket.emit('join-lobby', ['pl', 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUVWXYZŹŻ '], '0.9.0')
       });
 
       socket.on('game-list', games => {

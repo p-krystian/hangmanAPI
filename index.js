@@ -173,8 +173,15 @@ function joinLobby(socket, langData, frontVersion){
   socket.gameID = null;
   const [code, letters] = langData || [null, null];
 
-  if (semver.gt(minFontVersion, frontVersion || '0.0.0'))
+  try{
+    if (semver.gt(minFontVersion, frontVersion || '0.0.0'))
+      return socket.emit('old-version');
+  }
+  catch{
     return socket.emit('old-version');
+  }
+
+
   if (!letters?.split('').every(
     c => alphabets[code]?.includes(c.toUpperCase())
   )) return socket.emit('unsupported-lang');
