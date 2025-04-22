@@ -1,0 +1,15 @@
+{
+  "tasks": {
+    "dev": "deno run --watch ./app/main.ts",
+    "start": "deno run ./app/main.ts"
+  },
+  "fmt": {
+    "useTabs": false,
+    "lineWidth": 80,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": true,
+    "proseWrap": "preserve"
+  },
+  "imports": {}
+}

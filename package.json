@@ -1,0 +1,8 @@
+{
+  "name": "hangmanapi",
+  "private": true,
+  "version": "0.8.0-dev",
+  "description": "WebSocket API for React Hangman",
+  "author": "p-krystian",
+  "type": "module"
+}
