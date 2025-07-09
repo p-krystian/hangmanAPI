@@ -1,11 +1,10 @@
 import Socket from './types/sioSocket.ts';
 import { ClientEvents as ce, ServerEvents as se } from './types/events.ts';
-import { supportedLangs } from './utils/config.ts';
 import ok from './utils/validators.ts';
 import GamesManager from './gamesManager.ts';
 import { PublicGame } from './types/game.ts';
 
-type Lang = keyof typeof supportedLangs;
+type Lang = ReturnType<typeof ok.langCode>;
 
 const GAMES_MANAGER = new GamesManager();
 
@@ -34,16 +33,20 @@ function playerCleanup(socket: Socket) {
 }
 
 function joinLobby(socket: Socket, langCode: unknown, frontVer: unknown) {
-  if (!ok.version(frontVer)) {
-    socket.emit(se.OLD_VERSION); // VALIDATION
-    return;
-  }
-  if (!ok.langCode(langCode)) {
-    socket.emit(se.UNSUPPORTED_LANG); // VALIDATION
-    return;
-  }
+  let lang: Lang;
 
-  const lang = langCode as Lang; // FIX type
+  try {
+    ok.version(frontVer);
+  } catch {
+    socket.emit(se.OLD_VERSION);
+    return;
+  }
+  try {
+    lang = ok.langCode(langCode);
+  } catch {
+    socket.emit(se.UNSUPPORTED_LANG);
+    return;
+  }
 
   playerCleanup(socket);
   socket.gameID = null;
