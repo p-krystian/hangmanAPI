@@ -1,0 +1,17 @@
+const config = {
+  hostname: Deno.env.get('HOSTNAME') || '127.0.0.1',
+  port: Number(Deno.env.get('PORT')) || 4321,
+  socketPath: Deno.env.get('SOCKET_PATH') || '/',
+  corsOrigin: Deno.env.get('ORIGIN') || '*',
+  redirectURL: Deno.env.get('REDIRECT_URL') || '',
+} as const;
+
+const supportedLangs = {
+  pl: 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPQRSŚTUVWXYZŻŹ ',
+  en: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ  ',
+} as const;
+
+const supportedFront = '0.9.0';
+const gameNameLength = { min: 3, max: 8 } as const;
+
+export { config, gameNameLength, supportedFront, supportedLangs };

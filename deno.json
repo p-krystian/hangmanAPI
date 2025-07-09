@@ -1,7 +1,8 @@
 {
+  "lock": false,
   "tasks": {
-    "dev": "deno run --watch ./app/main.ts",
-    "start": "deno run ./app/main.ts"
+    "dev": "deno run --allow-env --allow-net --env-file=.env --watch ./app/main.ts",
+    "start": "deno run --allow-env --allow-net --env-file=.env ./app/main.ts"
   },
   "fmt": {
     "useTabs": false,
@@ -11,5 +12,9 @@
     "singleQuote": true,
     "proseWrap": "preserve"
   },
-  "imports": {}
+  "imports": {
+    "semver": "jsr:@std/semver@^1.0.5",
+    "socket.io": "https://deno.land/x/socket_io@0.2.1/mod.ts",
+    "zod": "npm:zod"
+  }
 }
