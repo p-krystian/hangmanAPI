@@ -20,7 +20,7 @@ class GamesManager {
   create(
     name: GameType['name'],
     lang: GameType['lang'],
-    creatorID: PlayerType['id']
+    creatorID: PlayerType['id'],
   ) {
     const id = crypto.randomUUID() as string;
     const game = {

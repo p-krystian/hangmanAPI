@@ -56,8 +56,8 @@ function joinLobby(socket: Socket, langCode: unknown, frontVer: unknown) {
 }
 
 function createGame(socket: Socket, name: unknown) {
-  const lang = socket.lang as Lang; // VALIDATION
-  const gameName = name as string; // VALIDATION
+  const lang = ok.langCode(socket.lang);
+  const gameName = ok.gameName(name);
 
   socket.leave(`lobby-${lang}`);
   const game = GAMES_MANAGER.create(gameName, lang, socket.id);
@@ -70,10 +70,22 @@ function createGame(socket: Socket, name: unknown) {
 }
 
 function registerSocketActions(socket: Socket) {
+  function wrap<AT extends readonly unknown[]>(
+    listener: (socket: Socket, ...args: AT) => void,
+    args: AT,
+  ) {
+    try {
+      return listener(socket, ...args);
+    } catch (err) {
+      socket.emit(se.INVALID_DATA);
+      console.warn(err instanceof Error ? err.message : err);
+    }
+  }
+
   socket.on('disconnecting', () => playerCleanup(socket));
 
-  socket.on(ce.JOIN_LOBBY, (lang, ver) => joinLobby(socket, lang, ver));
-  socket.on(ce.CREATE_GAME, (name) => createGame(socket, name));
+  socket.on(ce.JOIN_LOBBY, (...args) => wrap(joinLobby, args));
+  socket.on(ce.CREATE_GAME, (...args) => wrap(createGame, args));
 }
 
 export { registerSocketActions };

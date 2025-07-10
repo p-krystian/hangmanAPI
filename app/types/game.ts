@@ -24,4 +24,4 @@ type Game = {
 
 type PublicGame = Pick<Game, 'id' | 'name'>;
 
-export { type GameData, type PlayerData, type Game, type PublicGame };
+export { type Game, type GameData, type PlayerData, type PublicGame };

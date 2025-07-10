@@ -5,33 +5,37 @@
     <title>Socket.io test</title>
 
     <style>
-      body{
+      body {
         background: black;
         color: white;
         text-align: center;
       }
-      form{
+      form {
         margin-top: 30px;
       }
     </style>
-    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.socket.io/4.7.4/socket.io.min.js"
+      integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <h1>Socket.io test</h1>
     <p>Connecting...</p>
     <section>None</section>
 
-    <form id='end'>
+    <form id="end">
       <input type="text" name="phrase" placeholder="End phrase" required>
       <button>Zakończ</button>
     </form>
 
-    <form id='phrase'>
+    <form id="phrase">
       <input type="text" name="phrase" placeholder="Phrase" required>
       <button>Zaakceptuj</button>
     </form>
 
-    <form id='create'>
+    <form id="create">
       <input type="text" name="name" placeholder="New game name" required>
       <button>Utwórz</button>
     </form>
@@ -43,22 +47,25 @@
       const end = document.querySelector('#end');
       const socket = io('ws://192.168.1.101:8090', { path: '/multi/' });
 
-      function join(id){
-        socket.emit('join-game', id)
+      function join(id) {
+        socket.emit('join-game', id);
       }
 
       socket.on('connect', () => {
         p.innerText = socket.id;
-        socket.emit('join-lobby', ['pl', 'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUVWXYZŹŻ '], '0.9.0')
+        socket.emit('join-lobby', [
+          'pl',
+          'AĄBCĆDEĘFGHIJKLŁMNŃOÓPRSŚTUVWXYZŹŻ ',
+        ], '0.9.0');
       });
 
-      socket.on('game-list', games => {
-        if ([...Object.keys(games)].length < 1){
+      socket.on('game-list', (games) => {
+        if ([...Object.keys(games)].length < 1) {
           section.innerText = 'Empty';
-          return
+          return;
         }
         let gameList = '';
-        for (const game of games){
+        for (const game of games) {
           gameList += `
             <div>
               ${game.name}
@@ -70,7 +77,7 @@
       });
 
       socket.on('wait-start', () => {
-        section.innerText = 'Wait for opponent'
+        section.innerText = 'Wait for opponent';
       });
       socket.on('give-phrase', () => {
         section.innerText = 'Enter phrase';
@@ -78,10 +85,10 @@
       socket.on('opponent-exit', () => {
         section.innerText = 'opponent exit';
       });
-      socket.on('start-game', phrase => {
+      socket.on('start-game', (phrase) => {
         section.innerText = `Entry: ${phrase}`;
       });
-      socket.on('game-data', data => {
+      socket.on('game-data', (data) => {
         section.innerHTML = `
           <p>You: ${data.wins}/${data.rounds}</p>
           <p>Opponent: ${data.oWins}/${data.oRounds}</p>
@@ -91,21 +98,20 @@
         `;
       });
 
-      create.addEventListener('submit', e => {
-        e.preventDefault()
+      create.addEventListener('submit', (e) => {
+        e.preventDefault();
         socket.emit('create-game', e.target.name.value);
       });
 
-      phrase.addEventListener('submit', e => {
-        e.preventDefault()
+      phrase.addEventListener('submit', (e) => {
+        e.preventDefault();
         socket.emit('write-phrase', e.target.phrase.value);
       });
 
-      end.addEventListener('submit', e => {
-        e.preventDefault()
+      end.addEventListener('submit', (e) => {
+        e.preventDefault();
         socket.emit('end-game', e.target.phrase.value);
       });
-
     </script>
   </body>
 </html>
