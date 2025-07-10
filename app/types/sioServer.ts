@@ -24,6 +24,5 @@ type ServerToClient = {
   [se.INVALID_DATA]: () => void;
 };
 
-type SocketServer = ClientToServer & ServerToClient;
 
-export default SocketServer;
+export {type ClientToServer, type ServerToClient};

@@ -17,7 +17,7 @@ type PlayerData = {
 type Game = {
   id: string;
   name: string;
-  players: [PlayerData, PlayerData?];
+  players: [PlayerData] | [PlayerData, PlayerData];
   started: boolean;
   lang: keyof typeof supportedLangs;
 };
