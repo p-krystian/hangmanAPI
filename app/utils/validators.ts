@@ -1,23 +1,39 @@
 import { z } from 'zod';
 import { greaterThan, parse } from 'semver';
-import { gameNameLen, supportedFront, supportedLangs } from './config.ts';
+import {
+  gameNameLen,
+  phraseLen,
+  supportedFront,
+  supportedLangs,
+} from './config.ts';
 
-function version(ver: unknown): string {
+const version = (ver: unknown) => {
   const version = z.string().parse(ver);
 
   if (!greaterThan(parse(supportedFront), parse(version))) {
     throw new Error('Unsupported version');
   }
   return version;
-}
-
+};
 const langCodeSchema = z.enum(
   Object.keys(supportedLangs) as [keyof typeof supportedLangs],
 );
 const gameNameSchema = z.string().min(gameNameLen.min).max(gameNameLen.max);
+const phrase = (lang: keyof typeof supportedLangs, phrase: unknown) => {
+  const characters = supportedLangs[lang];
+  const phraseStr = z
+    .string()
+    .toUpperCase()
+    .min(phraseLen.min)
+    .max(phraseLen.max)
+    .regex(new RegExp(`^[${characters}]+$`))
+    .parse(phrase);
+  return phraseStr;
+};
 
 export default {
   version: version,
   langCode: langCodeSchema.parse,
   gameName: gameNameSchema.parse,
+  phrase: phrase,
 };
