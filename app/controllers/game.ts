@@ -22,7 +22,14 @@ class Game {
     return this.players.find((p) => p.id !== playerID);
   }
 
+  /**
+   * Adds a player to the game by their ID.
+   * Returns true if the game is now full, otherwise false.
+   */
   joinPlayer(playerID: PID) {
+    if (this.players.length >= 2) {
+      throw new Error('Game is full');
+    }
     return this.players.push(createPlayer(playerID)) === 2;
   }
 
@@ -30,6 +37,10 @@ class Game {
     this.started = true;
   }
 
+  /**
+   * Assigns the submitted phrase to the player with the given ID.
+   * Returns true if all players have submitted their phrases, otherwise false.
+   */
   submitPhrase(playerID: PID, phrase: string) {
     this.players.find((p) => p.id === playerID)!.phrase = phrase;
     return this.players.every((p) => p.phrase);

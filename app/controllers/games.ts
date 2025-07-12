@@ -10,7 +10,9 @@ class GamesController {
   get(id: GID) {
     return this.gameList.get(id);
   }
-
+  /**
+   * Returns list of games that are not started for the given language.
+   */
   getFree(lang: GameType['lang']) {
     return [...this.gameList.values()].filter(
       (g) => g.lang === lang && !g.started,
