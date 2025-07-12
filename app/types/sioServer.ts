@@ -4,7 +4,7 @@ import { ClientEvents as ce, ServerEvents as se } from './events.ts';
 type ClientString = string | unknown;
 
 type ClientToServer = {
-  [ce.JOIN_LOBBY]: (langCode: ClientString, frontVersion: ClientString) => void;
+  [ce.JOIN_LOBBY]: () => void;
   [ce.CREATE_GAME]: (name: ClientString) => void;
   [ce.JOIN_GAME]: (id: ClientString) => void;
   [ce.WRITE_PHRASE]: (phrase: ClientString) => void;

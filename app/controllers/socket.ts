@@ -4,6 +4,7 @@ import ok from '@/utils/validators.ts';
 import { Game as GameType } from '@/types/game.ts';
 import { ServerEvents as se } from '@/types/events.ts';
 import { PublicGame } from '@/types/game.ts';
+import queryVariables from '@/types/queryVariables.ts';
 
 type Lang = ReturnType<typeof ok.langCode>;
 
@@ -21,11 +22,14 @@ const broadcastGames = (socket: SocketType, lang: Lang) => (
 class SocketController {
   socket: SocketType;
   gameID: GameType['id'] | null;
-  lang?: Lang;
+  lang: Lang;
 
   constructor(socket: SocketType) {
     this.socket = socket;
     this.gameID = null;
+    this.lang = ok.langCode(
+      socket.handshake.query.get(queryVariables.LANG_CODE),
+    );
   }
 
   playerCleanup() {
@@ -46,27 +50,13 @@ class SocketController {
     }
   }
 
-  joinLobby(langCode: unknown, frontVer: unknown) {
-    try {
-      ok.version(frontVer);
-    } catch {
-      this.socket.emit(se.OLD_VERSION);
-      return;
-    }
-    try {
-      this.lang = ok.langCode(langCode);
-    } catch {
-      this.socket.emit(se.UNSUPPORTED_LANG);
-      return;
-    }
-
+  joinLobby() {
     this.playerCleanup();
     this.socket.join(lobbyRoom(this.lang));
     this.socket.emit(se.GAME_LIST, getPublicGames(this.lang));
   }
 
   createGame(name: unknown) {
-    if (!this.lang) return;
     const gameName = ok.gameName(name);
 
     this.socket.leave(lobbyRoom(this.lang));
@@ -80,7 +70,7 @@ class SocketController {
   }
 
   joinGame(id: unknown) {
-    if (!this.lang || typeof id !== 'string' || this.gameID) {
+    if (typeof id !== 'string' || this.gameID) {
       return;
     }
 
