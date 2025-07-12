@@ -1,11 +1,6 @@
 import { Socket as SioSocket } from 'socket.io';
-import { supportedLangs } from '../utils/config.ts';
-import { Game as GameType } from '../types/game.ts';
 import { ClientToServer, ServerToClient } from './sioServer.ts';
 
-type Socket = SioSocket<ClientToServer, ServerToClient> & {
-  gameID?: GameType['id'] | null;
-  lang?: keyof typeof supportedLangs;
-};
+type Socket = SioSocket<ClientToServer, ServerToClient>;
 
 export default Socket;

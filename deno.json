@@ -13,6 +13,7 @@
     "proseWrap": "preserve"
   },
   "imports": {
+    "@/": "./app/",
     "semver": "jsr:@std/semver@^1.0.5",
     "socket.io": "https://deno.land/x/socket_io@0.2.1/mod.ts",
     "zod": "https://deno.land/x/zod@v3.25/mod.ts"

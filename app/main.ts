@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
-import SocketServerType from './types/sioServer.ts';
+import { ClientToServer, ServerToClient } from '@/types/sioServer.ts';
 import { config } from './utils/config.ts';
-import { registerSocketActions } from './socketManager.ts';
+import registerSocket from './utils/registerSocket.ts';
 
 const serverOptions = {
   onListen({ port, hostname }: { port: number; hostname: string }) {
@@ -26,8 +26,8 @@ const httpHandler = (req: Request) => {
   });
 };
 
-const io = new Server<SocketServerType>(handlerOptions);
-io.on('connection', (socket) => registerSocketActions(socket));
+const io = new Server<ClientToServer, ServerToClient>(handlerOptions);
+io.on('connection', registerSocket);
 
 const server = Deno.serve(
   serverOptions,

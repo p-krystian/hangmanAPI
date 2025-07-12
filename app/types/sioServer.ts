@@ -24,5 +24,4 @@ type ServerToClient = {
   [se.INVALID_DATA]: () => void;
 };
 
-
-export {type ClientToServer, type ServerToClient};
+export { type ClientToServer, type ServerToClient };

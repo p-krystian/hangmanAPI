@@ -19,17 +19,15 @@ const langCodeSchema = z.enum(
   Object.keys(supportedLangs) as [keyof typeof supportedLangs],
 );
 const gameNameSchema = z.string().min(gameNameLen.min).max(gameNameLen.max);
-const phrase = (lang: keyof typeof supportedLangs, phrase: unknown) => {
-  const characters = supportedLangs[lang];
-  const phraseStr = z
+const phrase = (lang: keyof typeof supportedLangs, phrase: unknown) => (
+  z
     .string()
     .toUpperCase()
     .min(phraseLen.min)
     .max(phraseLen.max)
-    .regex(new RegExp(`^[${characters}]+$`))
-    .parse(phrase);
-  return phraseStr;
-};
+    .regex(new RegExp(`^[${supportedLangs[lang]}]+$`))
+    .parse(phrase)
+);
 
 export default {
   version: version,
