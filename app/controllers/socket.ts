@@ -95,17 +95,39 @@ class SocketController {
 
   writePhrase(phrase: unknown) {
     const game = GamesController.get(this.gameID || '');
-    if (!game) {
+    if (!game?.started) {
       return;
     }
     const selfPhrase = ok.phrase(game.lang, phrase);
 
-    if (game.submitPhrase(this.socket.id, selfPhrase)) {
+    if (game.setPhrase(this.socket.id, selfPhrase)) {
       const opponent = game.getOpponent(this.socket.id)!;
       this.socket.emit(se.START_GAME, opponent.phrase!);
       this.socket.to(opponent.id).emit(se.START_GAME, selfPhrase);
     } else {
       this.socket.emit(se.WAIT_START);
+    }
+  }
+
+  endRound(phrase: unknown) {
+    const game = GamesController.get(this.gameID || '');
+    if (!game?.started) {
+      return;
+    }
+    if (game.checkPhrase(this.socket.id, phrase)) {
+      const opponentID = game.getOpponent(this.socket.id)!.id;
+      this.socket.to(opponentID).emit(se.GAME_DATA, game.getData(opponentID));
+    }
+    this.socket.emit(se.GAME_DATA, game.getData(this.socket.id));
+  }
+
+  nextRound() {
+    const game = GamesController.get(this.gameID || '');
+    if (!game?.started) {
+      return this.joinLobby();
+    }
+    if (game.nextReady()) {
+      this.socket.emit(se.GIVE_PHRASE);
     }
   }
 }

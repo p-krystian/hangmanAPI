@@ -22,6 +22,18 @@ class Game {
     return this.players.find((p) => p.id !== playerID);
   }
 
+  getData(playerID: PID) {
+    const self = this.players.find((p) => p.id === playerID)!;
+    const opponent = this.getOpponent(playerID)!;
+
+    return {
+      wins: self.wins,
+      rounds: self.rounds,
+      oWins: opponent.wins,
+      oRounds: opponent.rounds,
+    };
+  }
+
   /**
    * Adds a player to the game by their ID.
    * Returns true if the game is now full, otherwise false.
@@ -38,12 +50,35 @@ class Game {
   }
 
   /**
-   * Assigns the submitted phrase to the player with the given ID.
-   * Returns true if all players have submitted their phrases, otherwise false.
+   * Assigns the entered phrase to the player with the given ID.
+   * Returns true if all players have set their phrases, otherwise false.
    */
-  submitPhrase(playerID: PID, phrase: string) {
+  setPhrase(playerID: PID, phrase: string) {
     this.players.find((p) => p.id === playerID)!.phrase = phrase;
     return this.players.every((p) => p.phrase);
+  }
+
+  /**
+   * Checks if the provided phrase matches the phrase set by opponent .
+   * Increments the current player's round count, and if the guess is correct,
+   * increments their win count. Clears the checkd phrase after checking.
+   * Returns true if all players phrases have been checkd, otherwise false.
+   */
+  checkPhrase(playerID: PID, phrase: unknown) {
+    const opponentIndex = this.players.findIndex((p) => p.id !== playerID);
+    const selfIndex = Number(!opponentIndex);
+
+    this.players[selfIndex].rounds++;
+    if (this.players[opponentIndex].phrase === phrase) {
+      this.players[selfIndex].wins++;
+    }
+    this.players[opponentIndex].phrase = null;
+
+    return this.players.every((p) => !p.phrase);
+  }
+
+  nextReady(){
+    return this.players[0].rounds === this.players[1]?.rounds;
   }
 }
 

@@ -3,7 +3,7 @@ enum ClientEvents {
   CREATE_GAME = 'create-game',
   JOIN_GAME = 'join-game',
   WRITE_PHRASE = 'write-phrase',
-  END_GAME = 'end-game',
+  END_ROUND = 'end-round',
   NEXT_ROUND = 'next-round',
 }
 

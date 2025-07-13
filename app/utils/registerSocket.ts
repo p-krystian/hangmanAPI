@@ -38,6 +38,8 @@ function registerSocket(socket: SocketType) {
   socket.on(ce.CREATE_GAME, (...args) => wrap(sCtrl.createGame, args));
   socket.on(ce.JOIN_GAME, (...args) => wrap(sCtrl.joinGame, args));
   socket.on(ce.WRITE_PHRASE, (...args) => wrap(sCtrl.writePhrase, args));
+  socket.on(ce.END_ROUND, (...args) => wrap(sCtrl.endRound, args));
+  socket.on(ce.NEXT_ROUND, (...args) => wrap(sCtrl.nextRound, args));
 }
 
 export default registerSocket;

@@ -8,7 +8,7 @@ type ClientToServer = {
   [ce.CREATE_GAME]: (name: ClientString) => void;
   [ce.JOIN_GAME]: (id: ClientString) => void;
   [ce.WRITE_PHRASE]: (phrase: ClientString) => void;
-  [ce.END_GAME]: (phrase: ClientString) => void;
+  [ce.END_ROUND]: (phrase: ClientString) => void;
   [ce.NEXT_ROUND]: () => void;
 };
 
