@@ -10,9 +10,9 @@ The API uses Socket.IO to create a multiplayer game experience where players tak
 
 The API requires the following environment variables:
 
-- `PORT`: Port number the server runs on
-- `HOSTNAME`: Server hostname
-- `REDIRECT_URL`: URL to redirect HTTP requests to
+- `PORT`: Port number the server is listening on
+- `HOSTNAME`: Hostname the server is listening on
+- `REDIRECT_URL`: URL to redirect HTTP requests
 - `ORIGIN`: Allowed origin for CORS
 - `SOCKET_PATH`: Path for Socket.IO connections
 
@@ -29,14 +29,14 @@ The API requires the following environment variables:
 
 ### Client to Server Events
 
-| Event           | Parameters                            | Description                                     |
-| --------------- | ------------------------------------- | ----------------------------------------------- |
-| `join-lobby`    | `lang` (code), `ver` (version string) | Joins a language-specific lobby                 |
-| `create-game`   | `name` (string)                       | Creates a new game with the specified name      |
-| `join-game`     | `id` (string)                         | Joins an existing game by ID                    |
-| `write-phrase`  | `phrase` (string)                     | Submits a phrase for the opponent to guess      |
-| `end-game`      | `phrase` (string)                     | Ends the current game with the guessed phrase   |
-| `continue-game` | none                                  | Signals readiness to continue to the next round |
+| Event          | Parameters        | Description                                     |
+| -------------- | ----------------- | ----------------------------------------------- |
+| `join-lobby`   | none              | Joins a language-specific lobby                 |
+| `create-game`  | `name` (string)   | Creates a new game with the specified name      |
+| `join-game`    | `id` (string)     | Joins an existing game by ID                    |
+| `write-phrase` | `phrase` (string) | Submits a phrase for the opponent to guess      |
+| `end-round`    | `phrase` (string) | Ends the current game with the guessed phrase   |
+| `next-round`   | none              | Signals readiness to continue to the next round |
 
 ### Server to Client Events
 
@@ -48,5 +48,5 @@ The API requires the following environment variables:
 | `start-game`       | `phrase` (string)                | Starts the game with the opponent's phrase to guess       |
 | `game-data`        | `{wins, rounds, oWins, oRounds}` | Updates game statistics after each round                  |
 | `opponent-exit`    | none                             | Notifies when opponent disconnects                        |
-| `old-version`      | none                             | Warns client their version is outdated (below 0.8.0)      |
+| `old-version`      | none                             | Warns client their version is outdated                    |
 | `unsupported-lang` | none                             | Indicates the requested language is not supported         |
