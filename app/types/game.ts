@@ -1,4 +1,4 @@
-import { supportedLangs } from '../utils/config.ts';
+import { supportedLangs } from '@/utils/config.ts';
 
 type GameData = {
   wins: number;

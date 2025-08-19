@@ -1,6 +1,6 @@
 import { Game as GameType, PlayerData as PlayerType } from '@/types/game.ts';
 import Game from '@/controllers/game.ts';
-import createPlayer from '../utils/createPlayer.ts';
+import createPlayer from '@/utils/createPlayer.ts';
 
 type GID = GameType['id'];
 

@@ -1,5 +1,5 @@
-import { GameData, PublicGame } from './game.ts';
-import { ClientEvents as ce, ServerEvents as se } from './events.ts';
+import { GameData, PublicGame } from '@/types/game.ts';
+import { ClientEvents as ce, ServerEvents as se } from '@/types/events.ts';
 
 type ClientString = string | unknown;
 

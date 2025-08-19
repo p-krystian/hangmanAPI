@@ -1,7 +1,7 @@
 import { Server } from 'socket.io';
 import { ClientToServer, ServerToClient } from '@/types/sioServer.ts';
-import { config } from './utils/config.ts';
-import registerSocket from './utils/registerSocket.ts';
+import { config } from '@/utils/config.ts';
+import registerSocket from '@/utils/registerSocket.ts';
 
 const serverOptions = {
   onListen({ port, hostname }: { port: number; hostname: string }) {
