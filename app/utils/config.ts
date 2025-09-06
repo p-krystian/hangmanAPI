@@ -12,7 +12,7 @@ const supportedLangs = {
 } as const;
 
 const supportedFront = '0.9.0';
-const gameNameLen = { min: 3, max: 8 } as const;
+const gameNameLen = { min: 3, max: 12 } as const;
 const phraseLen = { min: 3, max: 20 } as const;
 
 export { config, gameNameLen, phraseLen, supportedFront, supportedLangs };
