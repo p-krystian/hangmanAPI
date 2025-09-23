@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { greaterThan, parse } from 'semver';
+import { greaterOrEqual, parse } from 'semver';
 import {
   gameNameLen,
   phraseLen,
@@ -10,7 +10,7 @@ import {
 const version = (ver: unknown) => {
   const version = z.string().parse(ver);
 
-  if (!greaterThan(parse(supportedFront), parse(version))) {
+  if (!greaterOrEqual(parse(supportedFront), parse(version))) {
     throw new Error('Unsupported version');
   }
   return version;
