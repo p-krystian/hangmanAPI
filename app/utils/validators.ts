@@ -10,7 +10,7 @@ import {
 const version = (ver: unknown) => {
   const version = z.string().parse(ver);
 
-  if (!greaterOrEqual(parse(supportedFront), parse(version))) {
+  if (!greaterOrEqual(parse(version), parse(supportedFront))) {
     throw new Error('Unsupported version');
   }
   return version;
