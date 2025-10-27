@@ -5,7 +5,7 @@ import createPlayer from '@/utils/createPlayer.ts';
 type GID = GameType['id'];
 
 class GamesController {
-  gameList = new Map<GID, Game>();
+  private gameList = new Map<GID, Game>();
 
   get(id: GID) {
     return this.gameList.get(id);
