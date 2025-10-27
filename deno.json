@@ -2,7 +2,8 @@
   "lock": false,
   "tasks": {
     "dev": "deno run --allow-env --allow-net --env-file=.env --watch ./app/main.ts",
-    "start": "deno run --allow-env --allow-net --env-file=.env ./app/main.ts"
+    "start": "deno run --allow-env --allow-net --env-file=.env ./app/main.ts",
+    "test": "deno test --allow-env --env-file=.env"
   },
   "fmt": {
     "indentWidth": 2,
