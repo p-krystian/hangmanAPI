@@ -7,22 +7,7 @@ import {
   supportedLangs,
 } from '@/utils/config.ts';
 
-function generateString(minLength: number, maxLength: number, chars: string) {
-  const randomLen = Math.round(
-    Math.random() * (maxLength - minLength) + minLength,
-  );
-  const getRandomChar = () => chars[Math.floor(Math.random() * chars.length)];
-
-  let string = '';
-
-  for (let i = 0; i < randomLen; i++) {
-    string += getRandomChar();
-  }
-
-  return string;
-}
-
-Deno.test('version validator passes supprted version', () => {
+Deno.test('version validator passes supported version', () => {
   expect(validators.version(supportedFront)).toBe(supportedFront);
 });
 Deno.test('version validator throws unsupported version', () => {
@@ -40,7 +25,7 @@ Deno.test('version validator throws unsupported version', () => {
 });
 
 Deno.test('langCode validator passes supported langs', () => {
-  for (const lang in supportedLangs) {
+  for (const lang of Object.keys(supportedLangs)) {
     expect(validators.langCode(lang)).toBe(lang);
   }
 });
@@ -54,60 +39,50 @@ Deno.test('langCode validator throws unsupported lang', () => {
 });
 
 Deno.test('gameName validator passes correct game name', () => {
-  const enChars = supportedLangs['en'];
+  const shortestGameName = 'X'.repeat(gameNameLen.min);
+  const longestGameName = 'X'.repeat(gameNameLen.min);
 
-  const randomGameName = generateString(
-    gameNameLen.min,
-    gameNameLen.max,
-    enChars,
-  );
-
-  expect(validators.gameName(randomGameName)).toBe(randomGameName);
+  expect(validators.gameName(shortestGameName)).toBe(shortestGameName);
+  expect(validators.gameName(longestGameName)).toBe(longestGameName);
 });
 Deno.test('gameName validator throws incorrect game name', () => {
-  const randomToLongName = generateString(
-    gameNameLen.max + 1,
-    gameNameLen.max + 8,
-    '123,/.abc ',
-  );
+  const randomTooLongName = 'X'.repeat(gameNameLen.max + 1);
+  const randomTooShortName = 'X'.repeat(gameNameLen.min - 1);
 
   expect(() => {
     validators.gameName(321);
   }).toThrow();
   expect(() => {
-    validators.gameName(randomToLongName);
+    validators.gameName(randomTooLongName);
+  }).toThrow();
+  expect(() => {
+    validators.gameName(randomTooShortName);
   }).toThrow();
 });
 
 Deno.test('phrase validator passes correct phrase', () => {
-  const enChars = supportedLangs['en'];
+  const okChar = supportedLangs['en'][0];
 
-  const randomPhrase = generateString(
-    phraseLen.min,
-    phraseLen.max,
-    enChars,
-  );
+  const shortestPhrase = okChar.repeat(phraseLen.min);
+  const longestPhrase = okChar.repeat(phraseLen.max);
 
-  expect(validators.phrase('en', randomPhrase)).toBe(
-    randomPhrase,
-  );
+  expect(validators.phrase('en', shortestPhrase)).toBe(shortestPhrase);
+  expect(validators.phrase('en', longestPhrase)).toBe(longestPhrase);
 });
 Deno.test('phrase validator throws incorrect phrase', () => {
-  const enChars = supportedLangs['en'];
+  const okChar = supportedLangs['en'][0];
 
-  const randomToLongPhrase = generateString(
-    phraseLen.max + 1,
-    phraseLen.max + 8,
-    enChars,
-  );
-  const randomSymbolicPhrase = generateString(
-    phraseLen.min,
-    phraseLen.max,
-    '!@#$%^&*()_+<>?,./;',
+  const randomTooLongPhrase = okChar.repeat(phraseLen.max + 1);
+  const randomTooShortPhrase = okChar.repeat(phraseLen.min - 1);
+  const randomSymbolicPhrase = '>'.repeat(
+    Math.floor((phraseLen.min + phraseLen.max) / 2),
   );
 
   expect(() => {
-    validators.phrase('en', randomToLongPhrase);
+    validators.phrase('en', randomTooLongPhrase);
+  }).toThrow();
+  expect(() => {
+    validators.phrase('en', randomTooShortPhrase);
   }).toThrow();
   expect(() => {
     validators.phrase('en', randomSymbolicPhrase);

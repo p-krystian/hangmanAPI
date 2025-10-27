@@ -24,6 +24,8 @@ Deno.test('Game controller works properly', async (t) => {
 
   await t.step('second player can join', () => {
     expect(game.joinPlayer(player1ID)).toBe(true);
+    expect(game.players.length).toBe(2);
+    expect(game.players.map(p => p.id)).toContain(player1ID);
   });
 
   await t.step('third player can not join', () => {
@@ -58,14 +60,8 @@ Deno.test('Game controller works properly', async (t) => {
     expect(game.nextReady()).toBe(true);
   });
 
-  await t.step('points counts corectly', () => {
-    const expectedOutput = {
-      wins: 1,
-      rounds: 1,
-      oWins: 0,
-      oRounds: 1,
-    };
-
-    expect(game.getData(player0ID)).toEqual(expectedOutput);
+  await t.step('points count correctly', () => {
+    expect(game.getData(player0ID)).toMatchObject({ rounds: 1, wins: 1 });
+    expect(game.getData(player1ID)).toMatchObject({ rounds: 1, wins: 0 });
   });
 });

@@ -32,7 +32,7 @@ Deno.test('Games controller works properly', async (t) => {
     expect(GamesController.getFree('pl')).not.toContain(game0);
   });
 
-  await t.step('game shows as free after start', () => {
+  await t.step('game not shows as free after start', () => {
     game0.start();
     expect(GamesController.getFree(selectedLang)).not.toContain(game0);
   });
