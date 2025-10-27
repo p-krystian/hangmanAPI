@@ -1,3 +1,4 @@
+import { expect } from 'jsr:@std/expect';
 import validators from '@/utils/validators.ts';
 import {
   gameNameLen,
@@ -5,7 +6,6 @@ import {
   supportedFront,
   supportedLangs,
 } from '@/utils/config.ts';
-import { expect } from 'jsr:@std/expect';
 
 function generateString(minLength: number, maxLength: number, chars: string) {
   const randomLen = Math.round(
@@ -54,15 +54,12 @@ Deno.test('langCode validator throws unsupported lang', () => {
 });
 
 Deno.test('gameName validator passes correct game name', () => {
-  const firstSupportedLang = Object.keys(
-    supportedLangs,
-  )[0] as keyof typeof supportedLangs;
-  const firstSupportedChars = supportedLangs[firstSupportedLang];
+  const enChars = supportedLangs['en'];
 
   const randomGameName = generateString(
     gameNameLen.min,
     gameNameLen.max,
-    firstSupportedChars,
+    enChars,
   );
 
   expect(validators.gameName(randomGameName)).toBe(randomGameName);
@@ -83,31 +80,25 @@ Deno.test('gameName validator throws incorrect game name', () => {
 });
 
 Deno.test('phrase validator passes correct phrase', () => {
-  const firstSupportedLang = Object.keys(
-    supportedLangs,
-  )[0] as keyof typeof supportedLangs;
-  const firstSupportedChars = supportedLangs[firstSupportedLang];
+  const enChars = supportedLangs['en'];
 
   const randomPhrase = generateString(
     phraseLen.min,
     phraseLen.max,
-    firstSupportedChars,
+    enChars,
   );
 
-  expect(validators.phrase(firstSupportedLang, randomPhrase)).toBe(
+  expect(validators.phrase('en', randomPhrase)).toBe(
     randomPhrase,
   );
 });
 Deno.test('phrase validator throws incorrect phrase', () => {
-  const firstSupportedLang = Object.keys(
-    supportedLangs,
-  )[0] as keyof typeof supportedLangs;
-  const firstSupportedChars = supportedLangs[firstSupportedLang];
+  const enChars = supportedLangs['en'];
 
   const randomToLongPhrase = generateString(
     phraseLen.max + 1,
     phraseLen.max + 8,
-    firstSupportedChars,
+    enChars,
   );
   const randomSymbolicPhrase = generateString(
     phraseLen.min,
@@ -116,9 +107,9 @@ Deno.test('phrase validator throws incorrect phrase', () => {
   );
 
   expect(() => {
-    validators.phrase(firstSupportedLang, randomToLongPhrase);
+    validators.phrase('en', randomToLongPhrase);
   }).toThrow();
   expect(() => {
-    validators.phrase(firstSupportedLang, randomSymbolicPhrase);
+    validators.phrase('en', randomSymbolicPhrase);
   }).toThrow();
 });

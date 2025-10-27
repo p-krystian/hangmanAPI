@@ -1,5 +1,5 @@
-import createPlayer from '@/utils/createPlayer.ts';
 import { expect } from 'jsr:@std/expect';
+import createPlayer from '@/utils/createPlayer.ts';
 
 Deno.test('createPlayer creates player object correctly', () => {
   const expectedObject = {
@@ -8,7 +8,7 @@ Deno.test('createPlayer creates player object correctly', () => {
     wins: 0,
     rounds: 0,
   };
-  const playerObject = createPlayer('1234', null);
+  const playerObject = createPlayer('1234');
 
   expect(playerObject).toEqual(expectedObject);
 });
